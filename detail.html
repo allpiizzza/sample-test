@@ -17,10 +17,12 @@
 
 </div>
 
+<script src="script.js"></script>
 <script>
-  // 목록 화면에서 카드를 클릭할 때 sessionStorage에 저장해둔 후기 정보를 꺼내옴
+  // 목록 화면에서 카드를 클릭할 때 sessionStorage에 저장해둔 후기 정보를 꺼내옴 (id 포함)
   const raw = sessionStorage.getItem('selectedReview');
   const container = document.getElementById('reviewDetail');
+  const pageEl = document.querySelector('.page');
 
   if (raw) {
     const review = JSON.parse(raw);
@@ -37,11 +39,98 @@
         <button type="button" class="btn btn-outline btn-danger">삭제하기</button>
       </div>
     `;
-
     container.querySelector('.detail-title').textContent = review.title;
     container.querySelector('.review-author').textContent = review.author;
     container.querySelector('.review-date').textContent = review.date;
     container.querySelector('.detail-content').textContent = review.content;
+
+    // 댓글 영역을 후기 내용 아래에 새로 추가함
+    const commentsSection = document.createElement('section');
+    commentsSection.className = 'comments-section';
+    commentsSection.innerHTML = `
+      <h2 class="comments-title">댓글</h2>
+
+      <div class="comment-list" id="commentList">
+        <p class="empty-message">불러오는 중...</p>
+      </div>
+
+      <form id="commentForm" class="write-form comment-form">
+        <label class="form-label" for="commentAuthor">이름</label>
+        <input type="text" id="commentAuthor" required>
+
+        <label class="form-label" for="commentContent">댓글</label>
+        <textarea id="commentContent" rows="3" required></textarea>
+
+        <div class="detail-actions">
+          <button type="submit" class="btn btn-primary" id="commentSubmitBtn">댓글 남기기</button>
+        </div>
+      </form>
+    `;
+    pageEl.appendChild(commentsSection);
+
+    const commentListEl = document.getElementById('commentList');
+    const commentForm = document.getElementById('commentForm');
+    const commentSubmitBtn = document.getElementById('commentSubmitBtn');
+
+    // 댓글 목록을 화면에 그려주는 함수
+    function renderComments(comments) {
+      commentListEl.innerHTML = '';
+
+      if (comments.length === 0) {
+        commentListEl.innerHTML = '<p class="empty-message">아직 댓글이 없어요.</p>';
+        return;
+      }
+
+      comments.forEach(comment => {
+        const item = document.createElement('div');
+        item.className = 'comment-item';
+        item.innerHTML = `
+          <div class="review-meta">
+            <span class="review-author"></span>
+            <span class="review-date"></span>
+          </div>
+          <p class="comment-content"></p>
+        `;
+        item.querySelector('.review-author').textContent = comment.author;
+        item.querySelector('.review-date').textContent = comment.date;
+        item.querySelector('.comment-content').textContent = comment.content;
+        commentListEl.appendChild(item);
+      });
+    }
+
+    // 이 후기(review.id)의 댓글만 불러와서 그리는 함수
+    async function loadComments() {
+      try {
+        const comments = await fetchComments(review.id);
+        renderComments(comments);
+      } catch (err) {
+        commentListEl.innerHTML = '<p class="empty-message">댓글을 불러오지 못했어요.</p>';
+      }
+    }
+
+    // 댓글 폼 제출 시: 저장하고, 폼을 비우고, 목록을 다시 불러옴
+    commentForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      commentSubmitBtn.disabled = true;
+      commentSubmitBtn.textContent = '등록하는 중...';
+
+      try {
+        await saveComment({
+          reviewId: review.id,
+          author: document.getElementById('commentAuthor').value,
+          content: document.getElementById('commentContent').value
+        });
+        commentForm.reset();
+        await loadComments();
+      } catch (err) {
+        alert('댓글 등록에 실패했어요. 잠시 후 다시 시도해주세요.');
+      } finally {
+        commentSubmitBtn.disabled = false;
+        commentSubmitBtn.textContent = '댓글 남기기';
+      }
+    });
+
+    loadComments();
   }
 </script>
 </body>

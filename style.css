@@ -246,6 +246,38 @@ body {
   margin-top: 36px;
 }
 
+/* comments */
+
+.comments-section {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--color-border);
+}
+
+.comments-title {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  margin: 0 0 20px;
+}
+
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.comment-item {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.comment-content {
+  margin: 6px 0 0;
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
 /* mobile */
 
 @media (max-width: 480px) {
