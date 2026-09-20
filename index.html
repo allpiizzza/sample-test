@@ -1,93 +1,104 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>책갈피 - 책 후기 목록</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="page">
-      <header class="site-header">
-        <h1 class="site-title">책갈피</h1>
-        <p class="site-tagline">마음에 남은 문장을 기록해요</p>
-      </header>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>책갈피 - 책 후기 목록</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
 
-      <div class="toolbar">
-        <div class="search-box">
-          <input
-            type="text"
-            id="searchInput"
-            placeholder="제목으로 검색해보세요"
-            aria-label="제목 검색"
-          />
-        </div>
-        <a href="write.html" class="btn btn-primary">새 후기 쓰기</a>
-      </div>
+  <header class="site-header">
+    <h1 class="site-title">책갈피</h1>
+    <p class="site-tagline">마음에 남은 문장을 기록해요</p>
+  </header>
 
-      <main class="review-list" id="reviewList">
-        <a
-          href="detail.html"
-          class="review-card"
-          data-title="달러구트 꿈 백화점"
-        >
-          <h2 class="review-title">달러구트 꿈 백화점</h2>
-          <div class="review-meta">
-            <span class="review-author">이미예</span>
-            <span class="review-date">2026.08.02</span>
-          </div>
-          <p class="review-preview">
-            잠든 사이 찾아가는 신비한 백화점 이야기. 몽환적인 분위기와 따뜻한
-            문장들이 오래 마음에 남았다.
-          </p>
-        </a>
-
-        <a href="detail.html" class="review-card" data-title="불편한 편의점">
-          <h2 class="review-title">불편한 편의점</h2>
-          <div class="review-meta">
-            <span class="review-author">김호연</span>
-            <span class="review-date">2026.07.14</span>
-          </div>
-          <p class="review-preview">
-            사연 많은 사람들이 모여드는 작은 편의점 이야기. 담백한 문체 속에
-            위로가 스며 있어 읽고 나면 마음이 한결 가벼워진다.
-          </p>
-        </a>
-
-        <a href="detail.html" class="review-card" data-title="아몬드">
-          <h2 class="review-title">아몬드</h2>
-          <div class="review-meta">
-            <span class="review-author">손원평</span>
-            <span class="review-date">2026.06.30</span>
-          </div>
-          <p class="review-preview">
-            감정을 잘 느끼지 못하는 소년의 시선으로 세상을 본다는 설정이
-            낯설면서도 깊은 여운을 남기는 소설이었다.
-          </p>
-        </a>
-      </main>
-
-      <p class="empty-message" id="emptyMessage" hidden>검색 결과가 없어요.</p>
+  <div class="toolbar">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="제목으로 검색해보세요" aria-label="제목 검색">
     </div>
+    <a href="write.html" class="btn btn-primary">새 후기 쓰기</a>
+  </div>
 
-    <script>
-      const input = document.getElementById('searchInput');
-      const cards = document.querySelectorAll('.review-card');
-      const emptyMessage = document.getElementById('emptyMessage');
+  <main class="review-list" id="reviewList"></main>
 
-      input.addEventListener('input', () => {
-        const keyword = input.value.trim().toLowerCase();
-        let visibleCount = 0;
+  <p class="empty-message" id="statusMessage">불러오는 중...</p>
 
-        cards.forEach((card) => {
-          const title = card.dataset.title.toLowerCase();
-          const isMatch = title.includes(keyword);
-          card.hidden = !isMatch;
-          if (isMatch) visibleCount++;
-        });
+</div>
 
-        emptyMessage.hidden = visibleCount !== 0;
-      });
-    </script>
-  </body>
+<script src="script.js"></script>
+<script>
+  const listEl = document.getElementById('reviewList');
+  const statusEl = document.getElementById('statusMessage');
+  const searchInput = document.getElementById('searchInput');
+  let allReviews = [];
+
+  // 후기 하나를 카드(<a>) 요소로 만들어주는 함수
+  function createCard(review) {
+    const card = document.createElement('a');
+    card.href = 'detail.html';
+    card.className = 'review-card';
+
+    card.innerHTML = `
+      <h2 class="review-title"></h2>
+      <div class="review-meta">
+        <span class="review-author"></span>
+        <span class="review-date"></span>
+      </div>
+      <p class="review-preview"></p>
+    `;
+    card.querySelector('.review-title').textContent = review.title;
+    card.querySelector('.review-author').textContent = review.author;
+    card.querySelector('.review-date').textContent = review.date;
+    card.querySelector('.review-preview').textContent = review.content;
+
+    // 카드를 클릭하면 그 후기 정보를 잠깐 저장해두고, 상세 화면에서 꺼내 씀
+    card.addEventListener('click', () => {
+      sessionStorage.setItem('selectedReview', JSON.stringify(review));
+    });
+
+    return card;
+  }
+
+  // 화면에 카드 목록을 다시 그려주는 함수
+  function renderReviews(reviews) {
+    listEl.innerHTML = '';
+    reviews.forEach(review => listEl.appendChild(createCard(review)));
+  }
+
+  // 검색어에 맞는 후기만 걸러서 다시 그리는 함수
+  function applySearch() {
+    const keyword = searchInput.value.trim().toLowerCase();
+    const filtered = keyword
+      ? allReviews.filter(r => r.title.toLowerCase().includes(keyword))
+      : allReviews;
+
+    renderReviews(filtered);
+
+    if (filtered.length === 0) {
+      statusEl.hidden = false;
+      statusEl.textContent = keyword ? '검색 결과가 없어요.' : '아직 등록된 후기가 없어요.';
+    } else {
+      statusEl.hidden = true;
+    }
+  }
+
+  // 시트에서 목록을 불러와 화면에 표시하는 함수
+  async function loadReviews() {
+    statusEl.hidden = false;
+    statusEl.textContent = '불러오는 중...';
+    try {
+      allReviews = await fetchReviews();
+      allReviews.reverse(); // 최근에 쓴 글이 위로 오게
+      applySearch();
+    } catch (err) {
+      statusEl.textContent = '목록을 불러오지 못했어요. 잠시 후 새로고침 해주세요.';
+    }
+  }
+
+  searchInput.addEventListener('input', applySearch);
+  loadReviews();
+</script>
+</body>
 </html>

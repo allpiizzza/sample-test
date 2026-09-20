@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>책갈피 - 후기 쓰기</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+
+  <a href="index.html" class="back-link">← 목록으로</a>
+
+  <h1 class="detail-title">새 후기 쓰기</h1>
+
+  <form id="writeForm" class="write-form">
+    <label class="form-label" for="titleInput">제목</label>
+    <input type="text" id="titleInput" required>
+
+    <label class="form-label" for="authorInput">작성자</label>
+    <input type="text" id="authorInput" required>
+
+    <label class="form-label" for="contentInput">내용</label>
+    <textarea id="contentInput" rows="8" required></textarea>
+
+    <div class="detail-actions">
+      <button type="submit" class="btn btn-primary" id="submitBtn">등록하기</button>
+    </div>
+
+    <p class="empty-message" id="writeStatus" hidden></p>
+  </form>
+
+</div>
+
+<script src="script.js"></script>
+<script>
+  const form = document.getElementById('writeForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const statusEl = document.getElementById('writeStatus');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault(); // 페이지가 새로고침되지 않도록 막음
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '등록하는 중...';
+
+    try {
+      // 작성일은 보내지 않음 — Apps Script가 저장할 때 오늘 날짜를 자동으로 붙여줌
+      await saveReview({
+        title: document.getElementById('titleInput').value,
+        author: document.getElementById('authorInput').value,
+        content: document.getElementById('contentInput').value
+      });
+      window.location.href = 'index.html';
+    } catch (err) {
+      statusEl.hidden = false;
+      statusEl.textContent = '등록에 실패했어요. 잠시 후 다시 시도해주세요.';
+      submitBtn.disabled = false;
+      submitBtn.textContent = '등록하기';
+    }
+  });
+</script>
+</body>
+</html>
