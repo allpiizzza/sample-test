@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>책갈피 - 책 후기 목록</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="site-header">
+        <h1 class="site-title">책갈피</h1>
+        <p class="site-tagline">마음에 남은 문장을 기록해요</p>
+      </header>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="제목으로 검색해보세요"
+            aria-label="제목 검색"
+          />
+        </div>
+        <a href="write.html" class="btn btn-primary">새 후기 쓰기</a>
+      </div>
+
+      <main class="review-list" id="reviewList">
+        <a
+          href="detail.html"
+          class="review-card"
+          data-title="달러구트 꿈 백화점"
+        >
+          <h2 class="review-title">달러구트 꿈 백화점</h2>
+          <div class="review-meta">
+            <span class="review-author">이미예</span>
+            <span class="review-date">2026.08.02</span>
+          </div>
+          <p class="review-preview">
+            잠든 사이 찾아가는 신비한 백화점 이야기. 몽환적인 분위기와 따뜻한
+            문장들이 오래 마음에 남았다.
+          </p>
+        </a>
+
+        <a href="detail.html" class="review-card" data-title="불편한 편의점">
+          <h2 class="review-title">불편한 편의점</h2>
+          <div class="review-meta">
+            <span class="review-author">김호연</span>
+            <span class="review-date">2026.07.14</span>
+          </div>
+          <p class="review-preview">
+            사연 많은 사람들이 모여드는 작은 편의점 이야기. 담백한 문체 속에
+            위로가 스며 있어 읽고 나면 마음이 한결 가벼워진다.
+          </p>
+        </a>
+
+        <a href="detail.html" class="review-card" data-title="아몬드">
+          <h2 class="review-title">아몬드</h2>
+          <div class="review-meta">
+            <span class="review-author">손원평</span>
+            <span class="review-date">2026.06.30</span>
+          </div>
+          <p class="review-preview">
+            감정을 잘 느끼지 못하는 소년의 시선으로 세상을 본다는 설정이
+            낯설면서도 깊은 여운을 남기는 소설이었다.
+          </p>
+        </a>
+      </main>
+
+      <p class="empty-message" id="emptyMessage" hidden>검색 결과가 없어요.</p>
+    </div>
+
+    <script>
+      const input = document.getElementById('searchInput');
+      const cards = document.querySelectorAll('.review-card');
+      const emptyMessage = document.getElementById('emptyMessage');
+
+      input.addEventListener('input', () => {
+        const keyword = input.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        cards.forEach((card) => {
+          const title = card.dataset.title.toLowerCase();
+          const isMatch = title.includes(keyword);
+          card.hidden = !isMatch;
+          if (isMatch) visibleCount++;
+        });
+
+        emptyMessage.hidden = visibleCount !== 0;
+      });
+    </script>
+  </body>
+</html>
