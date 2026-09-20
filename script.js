@@ -1,5 +1,5 @@
 // 배포한 Apps Script 웹앱 주소 — 나중에 다시 배포해서 주소가 바뀌면 여기만 고치면 됨
-const API_URL = "https://script.google.com/macros/s/AKfycbzUmbT8iAwbyHCRZ4CK7p_99NWCJoaIpxlhyfVShW056UpQxqh9NeMCy36Y37UFQ9zP/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwguq9NoZDnXPJtIMxclPXk74B_tKkgls2nR5AnDSX8m7iPQzTCgoQoKe2OWPegtJ_d/exec";
 
 // 목록 불러오기: Apps Script에 GET 요청을 보내고, 후기 배열을 받아옴
 async function fetchReviews() {
