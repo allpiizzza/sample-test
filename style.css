@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500&display=swap');
 
 :root {
-  --color-bg: #faf3e8;
-  --color-surface: #fffdf9;
-  --color-border: #e7d9c4;
-  --color-text: #3a2e27;
-  --color-text-muted: #8c7a68;
-  --color-accent: #a0522d;
-  --color-accent-hover: #7c3f1f;
-  --color-danger: #b5493a;
+  --color-bg: #F2F8FC;
+  --color-surface: #FFFFFF;
+  --color-border: #D6E7F2;
+  --color-text: #263640;
+  --color-text-muted: #7C93A3;
+  --color-accent: #3B82C4;
+  --color-accent-hover: #2D6699;
+  --color-danger: #C1503F;
   --font-serif: 'Noto Serif KR', serif;
   --font-sans: 'Noto Sans KR', sans-serif;
 }
@@ -97,7 +97,7 @@ body {
 
 .btn-primary {
   background: var(--color-accent);
-  color: #fff9f2;
+  color: #FCFEFF;
 }
 
 .btn-primary:hover {
